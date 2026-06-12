@@ -1,0 +1,36 @@
+name: Monitor Guild Tibia
+
+on:
+  schedule:
+    # roda a cada 15 minutos
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}  # permite rodar manualmente também
+
+permissions:
+  contents: write
+
+jobs:
+  monitorar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: pip install requests
+
+      - name: Rodar monitor
+        run: python monitor.py
+
+      - name: Salvar resultados no repositório
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add sessions.csv status_log.csv state.json
+          git diff --staged --quiet || git commit -m "Atualiza dados de monitoramento [skip ci]"
+          git push
