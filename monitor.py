@@ -1,12 +1,12 @@
 """
-MONITOR DE GUILD - TIBIA (v2 - usando lista de online do servidor)
-=====================================================================
-A API de guild não retorna o status online em tempo real de forma
-confiável. Esse script usa o endpoint /v4/world/{world}, que traz a
-lista de TODOS os players online no servidor agora, e cruza essa lista
-com os membros da guild "Quinta Serie Ead".
+MONITOR DE GUILD - TIBIA (v3 - com notificações no Telegram)
+==============================================================
+Mesma lógica do v2 (usa /v4/world/{world} para checar quem está online),
+mas agora também envia mensagens no Telegram quando alguém loga/desloga.
 
-Roda UMA VEZ por execução (chamado pelo GitHub Actions a cada X minutos).
+CONFIGURAÇÃO NECESSÁRIA (feita via "Secrets" no GitHub, não no código):
+- TELEGRAM_BOT_TOKEN -> token do seu bot (recebido do @BotFather)
+- TELEGRAM_CHAT_ID   -> ID do grupo/chat onde as mensagens serão enviadas
 
 Arquivos gerados:
 - members.json      -> lista de membros da guild (atualizada periodicamente)
@@ -24,9 +24,7 @@ from datetime import datetime, timezone
 GUILD_NAME = "Quinta Serie Ead"
 WORLD_NAME = "Jadebra"
 
-# Recarrega a lista de membros da guild a cada N execuções
-# (não precisa toda vez, a lista de membros muda pouco)
-REFRESH_MEMBERS_EVERY_RUNS = 24  # ex: 24 execuções de 15min = a cada ~6h
+REFRESH_MEMBERS_EVERY_RUNS = 24  # ~6h se rodar a cada 15 min
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATE_FILE = os.path.join(BASE_DIR, "state.json")
@@ -37,6 +35,10 @@ STATUS_LOG_FILE = os.path.join(BASE_DIR, "status_log.csv")
 API_GUILD_URL = "https://api.tibiadata.com/v4/guild/{}"
 API_WORLD_URL = "https://api.tibiadata.com/v4/world/{}"
 HEADERS = {"User-Agent": "Tibia-Guild-Monitor/1.0 (personal use)"}
+
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
+TELEGRAM_API_URL = "https://api.telegram.org/bot{}/sendMessage"
 
 
 def now_str():
@@ -68,7 +70,6 @@ def ensure_csv_headers():
 
 
 def fetch_guild_members(guild_name):
-    """Retorna lista de dicts: {name, vocation, level}"""
     url = API_GUILD_URL.format(guild_name.replace(" ", "%20"))
     resp = requests.get(url, headers=HEADERS, timeout=30)
     resp.raise_for_status()
@@ -88,7 +89,6 @@ def fetch_guild_members(guild_name):
 
 
 def fetch_online_players(world_name):
-    """Retorna set com nomes de players online no mundo agora"""
     url = API_WORLD_URL.format(world_name)
     resp = requests.get(url, headers=HEADERS, timeout=30)
     resp.raise_for_status()
@@ -115,6 +115,34 @@ def log_session(player, vocation, level, login_time, logout_time):
         writer = csv.writer(f)
         writer.writerow([player, vocation, level, login_time, logout_time, duration_min])
 
+    return duration_min
+
+
+def send_telegram_message(text):
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("Telegram não configurado (faltam TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID). Pulando notificação.")
+        return
+
+    url = TELEGRAM_API_URL.format(TELEGRAM_BOT_TOKEN)
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": text,
+        "parse_mode": "HTML",
+    }
+    try:
+        resp = requests.post(url, json=payload, timeout=15)
+        if resp.status_code != 200:
+            print(f"Erro ao enviar mensagem Telegram: {resp.status_code} {resp.text}")
+    except requests.exceptions.RequestException as e:
+        print(f"Erro de rede ao enviar Telegram: {e}")
+
+
+def format_duration(minutes):
+    if minutes < 60:
+        return f"~{int(minutes)}min"
+    hours = minutes / 60
+    return f"~{hours:.1f}h".replace(".0h", "h")
+
 
 def main():
     ensure_csv_headers()
@@ -125,8 +153,8 @@ def main():
     run_count = members_data.get("run_count", 0)
 
     timestamp = now_str()
+    is_first_run = (run_count == 0)
 
-    # Atualiza lista de membros se necessário (primeira vez ou periodicamente)
     if not members or run_count % REFRESH_MEMBERS_EVERY_RUNS == 0:
         try:
             members = fetch_guild_members(GUILD_NAME)
@@ -134,12 +162,11 @@ def main():
         except requests.exceptions.RequestException as e:
             print(f"[{timestamp}] Erro ao buscar membros da guild: {e}")
             if not members:
-                return  # sem lista de membros não há o que fazer
+                return
 
     run_count += 1
     save_json(MEMBERS_FILE, {"members": members, "run_count": run_count})
 
-    # Busca players online no mundo agora
     try:
         online_players = fetch_online_players(WORLD_NAME)
     except requests.exceptions.RequestException as e:
@@ -164,15 +191,29 @@ def main():
 
         if prev is None:
             state[name] = {"status": status, "since": timestamp, "vocation": vocation, "level": level}
+            # Não notifica na primeira vez que vê o player (evita spam inicial)
             continue
 
         if prev["status"] != status:
             if status == "online":
                 print(f"[{timestamp}] {name} LOGOU")
+                if not is_first_run:
+                    send_telegram_message(
+                        f"🟢 <b>{name}</b> está online! ({vocation} · Lv {level})\n"
+                        f"🕒 Logou às {timestamp.split(' ')[1]} (UTC)"
+                    )
                 state[name] = {"status": "online", "since": timestamp, "vocation": vocation, "level": level}
             else:
                 print(f"[{timestamp}] {name} DESLOGOU (online desde {prev['since']})")
-                log_session(name, vocation, level, prev["since"], timestamp)
+                duration_min = log_session(name, vocation, level, prev["since"], timestamp)
+                if not is_first_run:
+                    login_hour = prev["since"].split(' ')[1]
+                    logout_hour = timestamp.split(' ')[1]
+                    send_telegram_message(
+                        f"🔴 <b>{name}</b> deslogou. 👋\n"
+                        f"🕒 Logou às {login_hour} • Deslogou às {logout_hour} (UTC)\n"
+                        f"⏱ Ficou online por {format_duration(duration_min)}"
+                    )
                 state[name] = {"status": "offline", "since": timestamp, "vocation": vocation, "level": level}
         else:
             state[name]["vocation"] = vocation
