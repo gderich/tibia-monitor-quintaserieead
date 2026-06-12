@@ -2,9 +2,8 @@ name: Monitor Guild Tibia
 
 on:
   schedule:
-    # roda a cada 15 minutos
     - cron: "*/15 * * * *"
-  workflow_dispatch: {}  # permite rodar manualmente também
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -25,12 +24,15 @@ jobs:
         run: pip install requests
 
       - name: Rodar monitor
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python monitor.py
 
       - name: Salvar resultados no repositório
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sessions.csv status_log.csv state.json
+          git add sessions.csv status_log.csv state.json members.json
           git diff --staged --quiet || git commit -m "Atualiza dados de monitoramento [skip ci]"
           git push
