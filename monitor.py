@@ -19,7 +19,9 @@ import requests
 import csv
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
+BRASILIA_TZ = timezone(timedelta(hours=-3))
 
 GUILD_NAME = "Quinta Serie Ead"
 WORLD_NAME = "Jadebra"
@@ -43,6 +45,13 @@ TELEGRAM_API_URL = "https://api.telegram.org/bot{}/sendMessage"
 
 def now_str():
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def to_brasilia_hour(utc_timestamp_str):
+    """Recebe 'YYYY-MM-DD HH:MM:SS' em UTC e retorna 'HH:MM' em horário de Brasília"""
+    dt_utc = datetime.strptime(utc_timestamp_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+    dt_brasilia = dt_utc.astimezone(BRASILIA_TZ)
+    return dt_brasilia.strftime("%H:%M")
 
 
 def load_json(path, default):
@@ -200,18 +209,18 @@ def main():
                 if not is_first_run:
                     send_telegram_message(
                         f"🟢 <b>{name}</b> está online! ({vocation} · Lv {level})\n"
-                        f"🕒 Logou às {timestamp.split(' ')[1]} (UTC)"
+                        f"🕒 Logou às {to_brasilia_hour(timestamp)}"
                     )
                 state[name] = {"status": "online", "since": timestamp, "vocation": vocation, "level": level}
             else:
                 print(f"[{timestamp}] {name} DESLOGOU (online desde {prev['since']})")
                 duration_min = log_session(name, vocation, level, prev["since"], timestamp)
                 if not is_first_run:
-                    login_hour = prev["since"].split(' ')[1]
-                    logout_hour = timestamp.split(' ')[1]
+                    login_hour = to_brasilia_hour(prev["since"])
+                    logout_hour = to_brasilia_hour(timestamp)
                     send_telegram_message(
                         f"🔴 <b>{name}</b> deslogou. 👋\n"
-                        f"🕒 Logou às {login_hour} • Deslogou às {logout_hour} (UTC)\n"
+                        f"🕒 Logou às {login_hour} • Deslogou às {logout_hour}\n"
                         f"⏱ Ficou online por {format_duration(duration_min)}"
                     )
                 state[name] = {"status": "offline", "since": timestamp, "vocation": vocation, "level": level}
