@@ -2,8 +2,9 @@ name: Monitor Guild Tibia
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
-  workflow_dispatch: {}
+    # fallback: roda a cada 5 minutos mesmo se o ping externo falhar
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}  # disparado pelo cron-job.org a cada 1 minuto
 
 permissions:
   contents: write
