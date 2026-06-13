@@ -178,9 +178,6 @@ def main():
 
     try:
         online_players = fetch_online_players(WORLD_NAME)
-        print(f"[{timestamp}] DEBUG: {len(online_players)} players online no mundo {WORLD_NAME} no total.")
-        print(f"[{timestamp}] DEBUG: amostra de nomes online: {list(online_players)[:10]}")
-        print(f"[{timestamp}] DEBUG: amostra de nomes da guild: {[m['name'] for m in members[:5]]}")
     except requests.exceptions.RequestException as e:
         print(f"[{timestamp}] Erro ao buscar players online do mundo: {e}")
         return
