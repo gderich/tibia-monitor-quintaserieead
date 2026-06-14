@@ -8,7 +8,7 @@
     {
       "name": "Chamanada",
       "vocation": "Elite Knight",
-      "level": 634
+      "level": 635
     },
     {
       "name": "Jinn Sinner",
@@ -23,7 +23,7 @@
     {
       "name": "Tebelor",
       "vocation": "Elder Druid",
-      "level": 578
+      "level": 579
     },
     {
       "name": "Bencke Millgrau",
@@ -116,5 +116,5 @@
       "level": 130
     }
   ],
-  "run_count": 2184
+  "run_count": 2185
 }
