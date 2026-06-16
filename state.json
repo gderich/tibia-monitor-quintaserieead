@@ -24,8 +24,8 @@
     "level": 352
   },
   "Tebelor": {
-    "status": "online",
-    "since": "2026-06-16 22:45:16",
+    "status": "offline",
+    "since": "2026-06-16 22:50:25",
     "vocation": "Elder Druid",
     "level": 579
   },
@@ -54,8 +54,8 @@
     "level": 496
   },
   "Niestaull Discolado": {
-    "status": "offline",
-    "since": "2026-06-12 16:56:54",
+    "status": "online",
+    "since": "2026-06-16 22:50:25",
     "vocation": "Royal Paladin",
     "level": 337
   },
