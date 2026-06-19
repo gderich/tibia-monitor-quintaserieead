@@ -8,7 +8,7 @@
     {
       "name": "Chamanada",
       "vocation": "Elite Knight",
-      "level": 636
+      "level": 635
     },
     {
       "name": "Jinn Sinner",
@@ -43,7 +43,7 @@
     {
       "name": "Guerreiro Penta",
       "vocation": "Royal Paladin",
-      "level": 496
+      "level": 497
     },
     {
       "name": "Niestaull Discolado",
@@ -116,5 +116,5 @@
       "level": 130
     }
   ],
-  "run_count": 9816
+  "run_count": 9817
 }
