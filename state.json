@@ -24,8 +24,8 @@
     "level": 352
   },
   "Tebelor": {
-    "status": "online",
-    "since": "2026-06-20 00:08:14",
+    "status": "offline",
+    "since": "2026-06-20 00:10:20",
     "vocation": "Elder Druid",
     "level": 579
   },
@@ -60,8 +60,8 @@
     "level": 337
   },
   "Niestouro": {
-    "status": "offline",
-    "since": "2026-06-16 23:10:24",
+    "status": "online",
+    "since": "2026-06-20 00:10:20",
     "vocation": "Exalted Monk",
     "level": 200
   },
