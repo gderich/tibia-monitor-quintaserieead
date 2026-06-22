@@ -13,7 +13,7 @@
     {
       "name": "Jinn Sinner",
       "vocation": "Royal Paladin",
-      "level": 400
+      "level": 401
     },
     {
       "name": "Sweetz Historinha",
@@ -28,7 +28,7 @@
     {
       "name": "Bencke Millgrau",
       "vocation": "Elite Knight",
-      "level": 347
+      "level": 348
     },
     {
       "name": "Championsin",
@@ -116,5 +116,5 @@
       "level": 130
     }
   ],
-  "run_count": 13608
+  "run_count": 13609
 }
