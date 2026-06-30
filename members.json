@@ -11,11 +11,6 @@
       "level": 639
     },
     {
-      "name": "Jinn Sinner",
-      "vocation": "Royal Paladin",
-      "level": 401
-    },
-    {
       "name": "Sweetz Historinha",
       "vocation": "Elder Druid",
       "level": 352
@@ -116,5 +111,5 @@
       "level": 130
     }
   ],
-  "run_count": 24312
+  "run_count": 24313
 }
