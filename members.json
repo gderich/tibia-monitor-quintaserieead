@@ -38,7 +38,7 @@
     {
       "name": "Guerreiro Penta",
       "vocation": "Royal Paladin",
-      "level": 498
+      "level": 499
     },
     {
       "name": "Niestaull Discolado",
@@ -111,5 +111,5 @@
       "level": 130
     }
   ],
-  "run_count": 28248
+  "run_count": 28249
 }
