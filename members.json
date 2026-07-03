@@ -33,7 +33,7 @@
     {
       "name": "Druid Palmitox",
       "vocation": "Elder Druid",
-      "level": 104
+      "level": 106
     },
     {
       "name": "Guerreiro Penta",
@@ -111,5 +111,5 @@
       "level": 130
     }
   ],
-  "run_count": 29664
+  "run_count": 29665
 }
