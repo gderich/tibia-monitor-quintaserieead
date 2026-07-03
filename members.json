@@ -8,7 +8,7 @@
     {
       "name": "Chamanada",
       "vocation": "Elite Knight",
-      "level": 639
+      "level": 641
     },
     {
       "name": "Sweetz Historinha",
@@ -18,7 +18,7 @@
     {
       "name": "Tebelor",
       "vocation": "Elder Druid",
-      "level": 581
+      "level": 582
     },
     {
       "name": "Bencke Millgrau",
@@ -111,5 +111,5 @@
       "level": 130
     }
   ],
-  "run_count": 29904
+  "run_count": 29905
 }
