@@ -18,7 +18,7 @@
     {
       "name": "Tebelor",
       "vocation": "Elder Druid",
-      "level": 585
+      "level": 586
     },
     {
       "name": "Bencke Millgrau",
@@ -111,5 +111,5 @@
       "level": 130
     }
   ],
-  "run_count": 32592
+  "run_count": 32593
 }
