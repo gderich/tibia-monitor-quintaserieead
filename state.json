@@ -1,7 +1,7 @@
 {
   "Wizard Dmarola": {
-    "status": "offline",
-    "since": "2026-07-05 14:33:14",
+    "status": "online",
+    "since": "2026-07-08 16:19:14",
     "vocation": "Master Sorcerer",
     "level": 632
   },
@@ -48,8 +48,8 @@
     "level": 106
   },
   "Guerreiro Penta": {
-    "status": "online",
-    "since": "2026-07-08 16:18:15",
+    "status": "offline",
+    "since": "2026-07-08 16:19:14",
     "vocation": "Royal Paladin",
     "level": 499
   },
