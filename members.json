@@ -61,11 +61,6 @@
       "level": 626
     },
     {
-      "name": "Kiing Zebaah",
-      "vocation": "Master Sorcerer",
-      "level": 302
-    },
-    {
       "name": "Nada Ver Tio",
       "vocation": "Master Sorcerer",
       "level": 55
@@ -101,5 +96,5 @@
       "level": 130
     }
   ],
-  "run_count": 41184
+  "run_count": 41185
 }
