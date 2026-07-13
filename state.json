@@ -48,8 +48,8 @@
     "level": 106
   },
   "Guerreiro Penta": {
-    "status": "offline",
-    "since": "2026-07-13 17:31:14",
+    "status": "online",
+    "since": "2026-07-13 23:45:17",
     "vocation": "Royal Paladin",
     "level": 500
   },
@@ -60,8 +60,8 @@
     "level": 337
   },
   "Niestouro": {
-    "status": "online",
-    "since": "2026-07-13 23:44:14",
+    "status": "offline",
+    "since": "2026-07-13 23:45:17",
     "vocation": "Exalted Monk",
     "level": 200
   },
